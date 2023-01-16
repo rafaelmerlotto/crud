@@ -1,9 +1,8 @@
 <?php
 session_start();
-
 include_once "conexao.php";
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,80 +22,51 @@ include_once "conexao.php";
 
 <body>
 
-
-
     <?php
-
     if (isset($_SESSION["msg"])) {
         echo $_SESSION["msg"];
         unset($_SESSION["msg"]);
     }
 
-
     $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-
     ?>
 
-
-
     <div class="container text-center">
-        <div class="row align-items-start">
-            <div class="col">
+        <div class="row justify-content-around">
 
-                <form class="col" action="" method="post">
+            <form class="col-4" action="" method="post">
 
-                    <div class="col-md-6 p-4">
+                <div class="col-md-12 p-4">
+                    <h3 class="text-uppercase">
+                        <span class="blue">Pesquisar Alunos</span>
+                    </h3> <br>
+                </div>
 
-                        <h3 class="text-uppercase">
-                            <span class="blue">Pesquisar Alunos</span>
-                        </h3>
-                        <br>
-                    </div>
+                <?php
+                $pesquisar_aluno = "";
+                if (isset($dados['pesquisar_aluno'])) [
+                    $pesquisar_aluno = $dados['pesquisar_aluno']
+                ]
+                ?>
+                <div class="col-md-12">
+                    <label class="form-label" for=""></label>
+                    <input type="text" name="pesquisar_aluno" class="form-control" id="inputDado" value="<?php echo $pesquisar_aluno; ?>" placeholder="Pesquisar aluno"><br>
+                </div>
 
-                    <?php
-                    $pesquisar_aluno = "";
-                    if (isset($dados['pesquisar_aluno'])) [
-                        $pesquisar_aluno = $dados['pesquisar_aluno']
-                    ]
-                    ?>
-                    <div class="col-md-6">
-                        <label class="form-label" for=""></label>
-                        <input type="text" name="pesquisar_aluno" class="form-control" id="inputDado" value="<?php echo $pesquisar_aluno; ?>" placeholder="Pesquisar aluno"><br>
-                    </div>
-
-                    <div class="col-md-6">
-                        <input type="submit" name="pesquisar" value="Pesquisar" class="btn btn-primary" id="inputDado">
-                    </div>
-                    <br><br>
-                    <div class="col-md-6">
-                        <a class="btn btn-link " href="Cadastrar.php">Cadastrar aluno</a>
-
-
-
-
-
-                    </div>
-            </div>
-
-
-
+                <div class="col-md-12">
+                    <input type="submit" name="pesquisar" value="Pesquisar" class="btn btn-primary" id="inputDado">
+                </div>
+                <br><br>
+                <div class="col-md-12">
+                    <a class="btn btn-link " href="Cadastrar.php">Cadastrar aluno</a>
+                </div>
+            </form>
 
         </div>
-
-    </div>
-
-    </form><br><br>
-
-
-
- 
-
-
-
+    </div><br>
 
 
     <?php
-
 
     if (!empty($dados['pesquisar'])) {
         $nome = "%" . $dados['pesquisar_aluno'] . "%";
@@ -108,14 +78,10 @@ include_once "conexao.php";
         while ($row_aluno = $result_alunos->fetch(PDO::FETCH_ASSOC)) {
             //var_dump($row_aluno );
             extract($row_aluno);
-          /*   echo "<div class='alert alert-primary text-center'>
-            <h1 >Resultado da pesquisa</h1>
-            </div>
-            "; */
+
     ?>
 
-
-            <table class="table table-dark table-striped-columns ">
+            <table class="table table-info table-striped-columns ">
                 <thead>
                     <tr>
                         <th scope="col">ID:</th>
@@ -130,7 +96,6 @@ include_once "conexao.php";
                 </thead>
 
                 <tbody>
-
                     <tr>
                         <td> <?php echo $id; ?></td>
                         <td> <?php echo  $nome; ?></td>
@@ -146,18 +111,14 @@ include_once "conexao.php";
                             <?php echo "<a class='btn btn-outline-warning' target='_blank' href='editar.php?aluno_id=$id'>Editar</a>" ?>
                             <?php echo   "<a class='btn btn-outline-danger' href='apagar.php?aluno_id=$id'>Apagar</a>" ?>
                         </div>
-
                     </tr>
-
-
                 </tbody>
-
             </table>
 
     <?php
         }
     } else {
-        echo " <p class='alert alert-primary d-flex align-items-center' role='alert' > Preencha o campo Pesquisar para listar os Alunos </p> ";
+        echo " <p class='alert alert-info d-flex align-items-center' role='alert' > Preencha o campo Pesquisar para listar os Alunos </p> ";
     }
     ?>
 

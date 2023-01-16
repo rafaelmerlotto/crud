@@ -1,8 +1,6 @@
 <?php
 session_start();
-
 include_once "conexao.php";
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,6 +23,11 @@ include_once "conexao.php";
 
     <?php
 
+    if (isset($_SESSION["msg"])) {
+        echo $_SESSION["msg"];
+        unset($_SESSION["msg"]);
+    }
+
     try {
 
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
@@ -43,7 +46,8 @@ include_once "conexao.php";
             $cad_aluno->execute();
 
             if ($cad_aluno->rowCount()) {
-                $_SESSION['mgg'] = "<p style='color:green;'> Aluno cadastrado com sucesso</p>";
+
+                $_SESSION['msg'] = "<p style='color:green;'> Aluno cadastrado com sucesso</p>";
                 header("Location:cadastrar.php");
                 unset($dados);
             } else {
@@ -56,26 +60,16 @@ include_once "conexao.php";
     }
     ?>
 
-
-
-
-
-
     <div class="container text-center">
         <div class="row justify-content-center ">
-            <div class="col-4">
-
-
-
+            <div class="col-6">
                 <form class="row g-3 " action="" method="post">
-                    <div class="col-md-12 p-4">
 
+                    <div class="col-md-12 p-4">
                         <h3 class="text-uppercase text-center">
                             <span class="blue">Cadastrar Alunos</span>
-                        </h3>
-                        <br>
+                        </h3><br>
                     </div>
-
 
                     <div class="col-md-12 ">
                         <label class="form-label">Nome</label>
@@ -90,7 +84,6 @@ include_once "conexao.php";
                                                                                                                                     echo $dados['sobrenome'];
                                                                                                                                 } ?>" required> <br>
                     </div>
-
 
                     <div class="col-md-12">
                         <label for="" class="form-label">E-mail</label>
@@ -111,10 +104,8 @@ include_once "conexao.php";
                         $result_curso_aluno = $conn->prepare($query_curso_aluno);
                         $result_curso_aluno->execute();
                         ?>
-
-                        <div class="col-md-12">
-
-                            <label class="form-label" for="">Curso:</label>
+                        <div class="col-md-14">
+                            <label class="form-label">Curso:</label>
                             <select class="form-control" id="inputDado" name="id_curso" required>
                                 <option class="form-control" value="">Selecione</option>
                                 <?php
@@ -127,25 +118,24 @@ include_once "conexao.php";
                                     echo " <option value='" . $row_curso_aluno['id'] . "'$select_curso_aluno>" . $row_curso_aluno['nome'] . "</option>";
                                 }
                                 ?>
-                            </select>
-                            <br><br>
-
+                            </select> <br><br>
                         </div>
-
-
 
                     </div>
 
                     <div class="col-md-12">
                         <input type="submit" value="Cadastrar" name="submit" class="btn btn-primary text-center" id="inputDado"><br><br>
                     </div>
+
                 </form>
 
                 <div class="col-md-12">
-                    <a class="btn btn-link" href="listar.php">Listar Alunos</a>
+                    <a class="btn btn-link" href="listar.php">← Listar Alunos</a>
                 </div>
 
-
+            </div>
+        </div>
+    </div>
 
 
 

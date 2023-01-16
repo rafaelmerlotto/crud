@@ -1,9 +1,8 @@
 <?php
 session_start();
-
 include_once "conexao.php";
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,16 +22,11 @@ include_once "conexao.php";
 
 <body>
 
-
-
     <?php
-
     if (isset($_SESSION["msg"])) {
         echo $_SESSION["msg"];
         unset($_SESSION["msg"]);
     }
-
-
 
     $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
 
@@ -48,8 +42,6 @@ include_once "conexao.php";
             $edit_aluno->bindParam(':senha', $senha_cript, PDO::PARAM_STR);
             $edit_aluno->bindParam(':id_curso', $dados['id_curso'], PDO::PARAM_INT);
 
-
-
             if ($edit_aluno->execute()) {
                 $_SESSION["msg"] = "<p style='color:green;'> Aluno editado com sucesso</p>";
                 header('Location:editar.php');
@@ -61,14 +53,11 @@ include_once "conexao.php";
             // echo "Erro: Aluno não editado com sucesso ". $erro->getMessage();
         }
     }
-    //Receber o id pela URL utilizando o método GET
 
+    //Receber o id pela URL utilizando o método GET
     $id = filter_input(INPUT_GET, "aluno_id", FILTER_SANITIZE_NUMBER_INT);
 
-
-
     //Pesquisar as informações do usuário no banco de dados
-
     try {
         $query_aluno = "SELECT id, nome, sobrenome, email, senha, id_curso FROM alunos  WHERE id=:id LIMIT 1";
         $result_aluno = $conn->prepare($query_aluno);
@@ -80,127 +69,107 @@ include_once "conexao.php";
         $_SESSION["msg"] = "<p style='color:red;'>Erro: Aluno não editado com sucesso</p>";
         header('Location:listar.php');
         //echo "Erro: Aluno não editado com sucesso". $erro->getMessage();
-
     }
-
     ?>
 
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-6">
+                <form class="row g-3 " method="post" action="">
 
-
-
-    <section id="form">
-        <div class="container pt-5 pb-5">
-            <div class="row">
-                <div class="col-md-12 text-center">
-
-
-                    <h3 class="text-uppercase">
-                        <span class="blue">Editar um aluno</span>
-                    </h3>
-                    <br>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-row">
-                                <br><br>
-
-
-
-                                <form class="row g-3" method="post" action="">
-
-
-                                    <?php
-                                    $id = "";
-                                    if (isset($row_aluno['id'])) {
-                                        $id = $row_aluno['id'];
-                                    }
-                                    ?>
-                                    <input type="hidden" name="id" class="form-control" id="inputDado" value="<?php echo $id; ?>" required>
-
-
-                                    <?php
-                                    $nome = "";
-                                    if (isset($row_aluno['nome'])) {
-                                        $nome = $row_aluno['nome'];
-                                    }
-                                    ?>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Nome: </label>
-                                        <input type="text" name="nome" placeholder="Nome" class="form-control" id="inputDado" value="<?php echo $nome; ?>" required><br>
-                                    </div>
-
-                                    <?php
-                                    $sobrenome = "";
-                                    if (isset($row_aluno['sobrenome'])) {
-                                        $sobrenome = $row_aluno['sobrenome'];
-                                    }
-                                    ?>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Sobrenome o curso: </label>
-                                        <input type="text" name="sobrenome" placeholder="Sobrenome" class="form-control" id="inputDado" value="<?php echo $sobrenome; ?>" required><br>
-                                    </div>
-
-                                    <?php
-                                    $email = "";
-                                    if (isset($row_aluno['email'])) {
-                                        $email = $row_aluno['email'];
-                                    }
-                                    ?>
-                                    <div class="col-md-6">
-                                        <label class="form-label">E-mail: </label>
-                                        <input type="email" name="email" placeholder="O melhor e-mail do usuario" class="form-control" id="inputDado" value="<?php echo $email; ?>" required><br>
-                                    </div>
-
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Senha: </label>
-                                        <input type="password" name="senha" class="form-control" id="inputDado" placeholder="Nova senha para o usuário" required><br>
-                                    </div>
-
-
-                                    <?php
-                                    $query_curso_aluno = "SELECT id, nome, professor FROM cursos ";
-                                    $result_curso_aluno = $conn->prepare($query_curso_aluno);
-                                    $result_curso_aluno->execute();
-                                    ?>
-                                   <div class="col-md-6">
-                                        <label class="form-label">Cursos: </label>
-                                        <select class="form-control" id="inputDado"  name="id_curso">
-                                            <option value="">Selecione</option>
-                                            <?php
-                                            while ($row_curso_aluno = $result_curso_aluno->fetch(PDO::FETCH_ASSOC)) {
-                                                extract($row_curso_aluno);
-                                                $select_curso_aluno = "";
-                                                if (isset($dados['id_curso']) and ($dados['id_curso'] == $id)) {
-                                                    $select_curso_aluno = "selected";
-                                                } elseif (((!isset($dados['id_curso'])) and (isset($row_aluno['id_curso']))) and ($row_aluno['id_curso'] == $id)) {
-                                                    $select_curso_aluno = "selected";
-                                                }
-                                                echo "<option value='$id'$select_curso_aluno>$nome</option>";
-                                            }
-                                            ?>
-                                             <br><br>
-                                        </select>
-                                        </div>
-                                       
-                                   
-
-                                    <div class="col-md-12">
-                                        <input type="submit" value="Salvar" name="submit" class="btn btn-primary" id="inputDado"><br><br>
-                                    </div>
-
-
-                                </form>
-                                <div class="col-md-12">
-                                    <a class="btn btn-link" href="listar.php"> ← Listar Alunos</a>
-                                </div>
-
-                            </div>
-                        </div>
+                    <div class="col-md-12 p-4">
+                        <h3 class="text-uppercase text-center">
+                            <span class="blue">Editar um aluno</span>
+                        </h3><br>
                     </div>
+
+                    <!-- ID -->
+                    <?php
+                    $id = "";
+                    if (isset($row_aluno['id'])) {
+                        $id = $row_aluno['id'];
+                    }
+                    ?>
+                    <input type="hidden" name="id" class="form-control" id="inputDado" value="<?php echo $id; ?>" required>
+
+                    <!-- NOME -->
+                    <?php
+                    $nome = "";
+                    if (isset($row_aluno['nome'])) {
+                        $nome = $row_aluno['nome'];
+                    }
+                    ?>
+                    <div class="col-md-12">
+                        <label class="form-label">Nome: </label>
+                        <input type="text" name="nome" placeholder="Nome" class="form-control" id="inputDado" value="<?php echo $nome; ?>" required><br>
+                    </div>
+
+                    <!-- SOBRENOME -->
+                    <?php
+                    $sobrenome = "";
+                    if (isset($row_aluno['sobrenome'])) {
+                        $sobrenome = $row_aluno['sobrenome'];
+                    }
+                    ?>
+                    <div class="col-md-12">
+                        <label class="form-label">Sobrenome: </label>
+                        <input type="text" name="sobrenome" placeholder="Sobrenome" class="form-control" id="inputDado" value="<?php echo $sobrenome; ?>" required><br>
+                    </div>
+
+                    <!-- EMAIL -->
+                    <?php
+                    $email = "";
+                    if (isset($row_aluno['email'])) {
+                        $email = $row_aluno['email'];
+                    }
+                    ?>
+                    <div class="col-md-12">
+                        <label class="form-label">E-mail: </label>
+                        <input type="email" name="email" placeholder="O melhor e-mail do usuario" class="form-control" id="inputDado" value="<?php echo $email; ?>" required><br>
+                    </div>
+
+                    <!-- SENHA -->
+                    <div class="col-md-12">
+                        <label class="form-label">Senha: </label>
+                        <input type="password" name="senha" class="form-control" id="inputDado" placeholder="Nova senha para o usuário" required><br>
+                    </div>
+
+                    <!-- CURSO -->
+                    <?php
+                    $query_curso_aluno = "SELECT id, nome, professor FROM cursos ";
+                    $result_curso_aluno = $conn->prepare($query_curso_aluno);
+                    $result_curso_aluno->execute();
+                    ?>
+                    <div class="col-md-12">
+                        <label class="form-label">Curso: </label>
+                        <select class="form-control" id="inputDado" name="id_curso" required>
+                            <option class="form-control" value="">Selecione</option>
+                            <?php
+                            while ($row_curso_aluno = $result_curso_aluno->fetch(PDO::FETCH_ASSOC)) {
+                                extract($row_curso_aluno);
+                                $select_curso_aluno = "";
+                                if (isset($dados['id_curso']) and ($dados['id_curso'] == $id)) {
+                                    $select_curso_aluno = "selected";
+                                } elseif (((!isset($dados['id_curso'])) and (isset($row_aluno['id_curso']))) and ($row_aluno['id_curso'] == $id)) {
+                                    $select_curso_aluno = "selected";
+                                }
+                                echo "<option value='$id' $select_curso_aluno >$nome</option>";
+                            }
+                            ?>
+                        </select> <br><br>
+                    </div>
+                    <div class="col-md-12">
+                        <input type="submit" value="Salvar" name="submit" class="btn btn-primary text-center" id="inputDado"><br><br>
+                    </div>
+
+                </form>
+                <div class="col-md-12">
+                    <a class="btn btn-link" href="listar.php">← Listar Alunos</a>
                 </div>
             </div>
-    </section>
+        </div>
+    </div>
+
 
 
 
