@@ -37,54 +37,62 @@ include_once "conexao.php";
 
     ?>
 
-    <section id="form" class="border">
-        <div class="container pt-5 pb-5 ">
-            <div class="row"></div>
-            <div class="col-md-12 text-center">
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-row">
-                            <br><br>
 
-                            <form class="row g-3 " action="" method="post">
+    <div class="container text-center">
+        <div class="row align-items-start">
+            <div class="col">
 
-                                <div class="col-md-8 text-center">
+                <form class="col" action="" method="post">
 
-                                    <h3 class="text-uppercase">
-                                        <span class="blue">Pesquisar Alunos</span>
-                                    </h3>
-                                    <br>
-                                </div>
+                    <div class="col-md-6 p-4">
 
-                                <?php
-                                $pesquisar_aluno = "";
-                                if (isset($dados['pesquisar_aluno'])) [
-                                    $pesquisar_aluno = $dados['pesquisar_aluno']
-                                ]
-                                ?>
-                                <div class="col-md-8 ">
-                                    <label class="form-label" for=""></label>
-                                    <input type="text" name="pesquisar_aluno" class="form-control" id="inputDado" value="<?php echo $pesquisar_aluno; ?>" placeholder="Pesquisar aluno"><br>
-                                </div>
-
-                                <div class="col-md-8">
-                                    <input type="submit" name="pesquisar" value="Pesquisar" class="btn btn-primary" id="inputDado">
-                                </div>
-                                <br><br>
-                                <div class="col-md-8 ">
-                                    <a class="btn btn-link " href="Cadastrar.php">Cadastrar aluno</a>
-
-                                </div>
-
-                            </form><br><br>
-
-                        </div>
+                        <h3 class="text-uppercase">
+                            <span class="blue">Pesquisar Alunos</span>
+                        </h3>
+                        <br>
                     </div>
-                </div>
+
+                    <?php
+                    $pesquisar_aluno = "";
+                    if (isset($dados['pesquisar_aluno'])) [
+                        $pesquisar_aluno = $dados['pesquisar_aluno']
+                    ]
+                    ?>
+                    <div class="col-md-6">
+                        <label class="form-label" for=""></label>
+                        <input type="text" name="pesquisar_aluno" class="form-control" id="inputDado" value="<?php echo $pesquisar_aluno; ?>" placeholder="Pesquisar aluno"><br>
+                    </div>
+
+                    <div class="col-md-6">
+                        <input type="submit" name="pesquisar" value="Pesquisar" class="btn btn-primary" id="inputDado">
+                    </div>
+                    <br><br>
+                    <div class="col-md-6">
+                        <a class="btn btn-link " href="Cadastrar.php">Cadastrar aluno</a>
+
+
+
+
+
+                    </div>
             </div>
+
+
+
+
         </div>
-    </section>
+
+    </div>
+
+    </form><br><br>
+
+
+
+ 
+
+
+
 
 
     <?php
@@ -100,8 +108,14 @@ include_once "conexao.php";
         while ($row_aluno = $result_alunos->fetch(PDO::FETCH_ASSOC)) {
             //var_dump($row_aluno );
             extract($row_aluno);
+          /*   echo "<div class='alert alert-primary text-center'>
+            <h1 >Resultado da pesquisa</h1>
+            </div>
+            "; */
     ?>
-            <table class="table table-dark table-striped-columns">
+
+
+            <table class="table table-dark table-striped-columns ">
                 <thead>
                     <tr>
                         <th scope="col">ID:</th>
@@ -109,9 +123,7 @@ include_once "conexao.php";
                         <th scope="col">Sobrenome:</th>
                         <th scope="col">E-mail:</th>
                         <th scope="col">Senha:</th>
-                        <th scope="col">Data de Nascimento:</th>
-                        <th scope="col">Telefone:</th>
-                        <th scope="col">Endereço:</th>
+                        <th scope="col">ID do curso:</th>
                         <th scope="col">Data cadastro:</th>
                         <th scope="col">Cadastro modificado: </th>
                     </tr>
@@ -120,22 +132,19 @@ include_once "conexao.php";
                 <tbody>
 
                     <tr>
-                        <td> <?php echo $row_aluno['id_aluno']; ?></td>
-                        <td> <?php echo  $row_aluno['nome']; ?></td>
-                        <td> <?php echo  $row_aluno['sobrenome']; ?></td>
-                        <td> <?php echo $row_aluno['email']; ?></td>
-                        <td> <?php echo  $row_aluno['senha']; ?></td>
-                        <td> <?php echo  date('d/m/Y', strtotime($row_aluno['data_nascimento'])); ?></td>
-                        <td> <?php echo  $row_aluno['contato_tel']; ?></td>
-                        <td> <?php echo  $row_aluno['endereco']; ?></td>
-                        <td><?php echo  date('d/m/Y h:i:s', strtotime($row_aluno['created'])); ?></td>
-                        <td> <?php echo $row_aluno['modified'];
-                                if (!empty($row_aluno['modified'])) {
-                                    echo (date('d/m/Y h:i:s', strtotime($row_aluno['modified'])));
+                        <td> <?php echo $id; ?></td>
+                        <td> <?php echo  $nome; ?></td>
+                        <td> <?php echo  $sobrenome; ?></td>
+                        <td> <?php echo $email; ?></td>
+                        <td> <?php echo  $senha; ?></td>
+                        <td> <?php echo  $id_curso; ?></td>
+                        <td><?php echo  date('d/m/Y H:i:s', strtotime($created)); ?></td>
+                        <td> <?php if (!empty($modified)) {
+                                    echo (date('d/m/Y H:i:s', strtotime($modified)));
                                 } ?></td>
                         <div class="col-md-8 ">
-                            <?php echo "<a class='btn btn-outline-warning' href='editar.php?aluno_id=$id_aluno'>Editar</a>" ?>
-                            <?php echo   "<a class='btn btn-outline-danger' href='apagar.php?aluno_id=$id_aluno'>Apagar</a>" ?>
+                            <?php echo "<a class='btn btn-outline-warning' target='_blank' href='editar.php?aluno_id=$id'>Editar</a>" ?>
+                            <?php echo   "<a class='btn btn-outline-danger' href='apagar.php?aluno_id=$id'>Apagar</a>" ?>
                         </div>
 
                     </tr>
@@ -148,7 +157,7 @@ include_once "conexao.php";
     <?php
         }
     } else {
-        echo "Preencha o campo Pesquisar para listar os Alunos";
+        echo " <p class='alert alert-primary d-flex align-items-center' role='alert' > Preencha o campo Pesquisar para listar os Alunos </p> ";
     }
     ?>
 

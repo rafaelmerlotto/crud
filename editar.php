@@ -27,7 +27,10 @@ include_once "conexao.php";
 
     <?php
 
-
+    if (isset($_SESSION["msg"])) {
+        echo $_SESSION["msg"];
+        unset($_SESSION["msg"]);
+    }
 
 
 
@@ -35,21 +38,21 @@ include_once "conexao.php";
 
     if (!empty($dados['submit'])) {
         try {
-            $query_edit_aluno = "UPDATE alunos SET nome=:nome, sobrenome=:sobrenome, email=:email, senha=:senha, data_nascimento=:data_nascimento, contato_tel=:contato_tel, endereco=:endereco, modified = NOW() WHERE id_aluno=:id_aluno";
+            $query_edit_aluno = "UPDATE alunos SET nome=:nome, sobrenome=:sobrenome, email=:email, senha=:senha, id_curso=:id_curso, modified = NOW() WHERE id=:id";
             $edit_aluno = $conn->prepare($query_edit_aluno);
+            $edit_aluno->bindParam(':id', $dados['id'], PDO::PARAM_INT);
             $edit_aluno->bindParam(':nome', $dados['nome'], PDO::PARAM_STR);
             $edit_aluno->bindParam(':sobrenome', $dados['sobrenome'], PDO::PARAM_STR);
             $edit_aluno->bindParam(':email', $dados['email'], PDO::PARAM_STR);
             $senha_cript = password_hash($dados['senha'], PASSWORD_DEFAULT);
             $edit_aluno->bindParam(':senha', $senha_cript, PDO::PARAM_STR);
-            $edit_aluno->bindParam(':data_nascimento', $dados['data_nascimento'], PDO::PARAM_INT);
-            $edit_aluno->bindParam(':contato_tel', $dados['contato_tel'], PDO::PARAM_INT);
-            $edit_aluno->bindParam(':endereco', $dados['endereco'], PDO::PARAM_STR);
-            $edit_aluno->bindParam(':id_aluno', $dados['id_aluno'], PDO::PARAM_INT);
+            $edit_aluno->bindParam(':id_curso', $dados['id_curso'], PDO::PARAM_INT);
+
+
 
             if ($edit_aluno->execute()) {
                 $_SESSION["msg"] = "<p style='color:green;'> Aluno editado com sucesso</p>";
-                header('Location:listar.php');
+                header('Location:editar.php');
             } else {
                 echo "Erro: Aluno não editado com sucesso!";
             }
@@ -58,18 +61,19 @@ include_once "conexao.php";
             // echo "Erro: Aluno não editado com sucesso ". $erro->getMessage();
         }
     }
-
     //Receber o id pela URL utilizando o método GET
 
-    $id_aluno = filter_input(INPUT_GET, "aluno_id", FILTER_SANITIZE_NUMBER_INT);
+    $id = filter_input(INPUT_GET, "aluno_id", FILTER_SANITIZE_NUMBER_INT);
 
-  
+
 
     //Pesquisar as informações do usuário no banco de dados
+
     try {
-        $query_aluno = "SELECT id_aluno, nome, sobrenome, email, senha, data_nascimento, contato_tel, endereco FROM alunos  WHERE id_aluno=:id_aluno LIMIT 1";
+        $query_aluno = "SELECT id, nome, sobrenome, email, senha, id_curso FROM alunos  WHERE id=:id LIMIT 1";
         $result_aluno = $conn->prepare($query_aluno);
-        $result_aluno->bindParam(':id_aluno', $id_aluno, PDO::PARAM_INT);
+        $result_aluno->bindParam(':id', $id, PDO::PARAM_INT);
+
         $result_aluno->execute();
         $row_aluno = $result_aluno->fetch(PDO::FETCH_ASSOC);
     } catch (PDOException $erro) {
@@ -102,16 +106,16 @@ include_once "conexao.php";
 
 
 
-                                <form class="row g-3" method="POST" action="">
+                                <form class="row g-3" method="post" action="">
 
 
                                     <?php
-                                    $id_aluno = "";
-                                    if (isset($row_aluno['id_aluno'])) {
-                                        $id = $row_aluno['id_aluno'];
+                                    $id = "";
+                                    if (isset($row_aluno['id'])) {
+                                        $id = $row_aluno['id'];
                                     }
                                     ?>
-                                    <input type="hidden" name="id_aluno" class="form-control" id="inputDado" value="<?php echo $id_aluno; ?>" required>
+                                    <input type="hidden" name="id" class="form-control" id="inputDado" value="<?php echo $id; ?>" required>
 
 
                                     <?php
@@ -132,7 +136,7 @@ include_once "conexao.php";
                                     }
                                     ?>
                                     <div class="col-md-6">
-                                        <label class="form-label">Sobrenome: </label>
+                                        <label class="form-label">Sobrenome o curso: </label>
                                         <input type="text" name="sobrenome" placeholder="Sobrenome" class="form-control" id="inputDado" value="<?php echo $sobrenome; ?>" required><br>
                                     </div>
 
@@ -155,40 +159,31 @@ include_once "conexao.php";
 
 
                                     <?php
-                                    $data_nascimento = "";
-                                    if (isset($row_aluno['data_nascimento'])) {
-                                        $data_nascimento = $row_aluno['data_nascimento'];
-                                    }
+                                    $query_curso_aluno = "SELECT id, nome, professor FROM cursos ";
+                                    $result_curso_aluno = $conn->prepare($query_curso_aluno);
+                                    $result_curso_aluno->execute();
                                     ?>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Data de nascimento: </label>
-                                        <input type="date" name="data_nascimento" class="form-control" id="inputDado" value="<?php echo $data_nascimento; ?>" required><br>
-                                    </div>
-
-
-                                    <?php
-                                    $contato_tel = "";
-                                    if (isset($row_aluno['contato_tel'])) {
-                                        $contato_tel = $row_aluno['contato_tel'];
-                                    }
-                                    ?>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Telefone: </label>
-                                        <input type="phone" name="contato_tel" class="form-control" id="inputDado" value="<?php echo $contato_tel; ?>" required><br>
-                                    </div>
-
-
-                                    <?php
-                                    $endereco = "";
-                                    if (isset($row_aluno['endereco'])) {
-                                        $endereco = $row_aluno['endereco'];
-                                    }
-                                    ?>
-                                    <div class="col-md-12">
-                                        <label class="form-label">Endereço: </label>
-                                        <textarea type="text" name="endereco" placeholder="Endereço" class="form-control" id="inputDado" value="<?php echo $endereco; ?>" required></textarea><br><br>
-                                    </div>
-
+                                   <div class="col-md-6">
+                                        <label class="form-label">Cursos: </label>
+                                        <select class="form-control" id="inputDado"  name="id_curso">
+                                            <option value="">Selecione</option>
+                                            <?php
+                                            while ($row_curso_aluno = $result_curso_aluno->fetch(PDO::FETCH_ASSOC)) {
+                                                extract($row_curso_aluno);
+                                                $select_curso_aluno = "";
+                                                if (isset($dados['id_curso']) and ($dados['id_curso'] == $id)) {
+                                                    $select_curso_aluno = "selected";
+                                                } elseif (((!isset($dados['id_curso'])) and (isset($row_aluno['id_curso']))) and ($row_aluno['id_curso'] == $id)) {
+                                                    $select_curso_aluno = "selected";
+                                                }
+                                                echo "<option value='$id'$select_curso_aluno>$nome</option>";
+                                            }
+                                            ?>
+                                             <br><br>
+                                        </select>
+                                        </div>
+                                       
+                                   
 
                                     <div class="col-md-12">
                                         <input type="submit" value="Salvar" name="submit" class="btn btn-primary" id="inputDado"><br><br>
@@ -197,7 +192,7 @@ include_once "conexao.php";
 
                                 </form>
                                 <div class="col-md-12">
-                                    <a class="btn btn-link" href="listar.php"> ← Listar Alunos</a>   
+                                    <a class="btn btn-link" href="listar.php"> ← Listar Alunos</a>
                                 </div>
 
                             </div>
