@@ -18,9 +18,9 @@
 <body>
 
 
-    <header>
+    <header class="container">
 
-        <div class="first">
+        <div>
             <h1> SISTEMA PHP CRUD </h1>
         </div>
 

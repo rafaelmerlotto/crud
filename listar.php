@@ -103,9 +103,9 @@ include_once "conexao.php";
                         <td> <?php echo $email; ?></td>
                         <td> <?php echo  $senha; ?></td>
                         <td> <?php echo  $id_curso; ?></td>
-                        <td><?php echo  date('d/m/Y H:i:s', strtotime($created)); ?></td>
+                        <td><?php echo  date('d/m/Y H:i', strtotime($created)); ?></td>
                         <td> <?php if (!empty($modified)) {
-                                    echo (date('d/m/Y H:i:s', strtotime($modified)));
+                                    echo (date('d/m/Y H:i', strtotime($modified)));
                                 } ?></td>
                         <div class="col-md-8 ">
                             <?php echo "<a class='btn btn-outline-warning' target='_blank' href='editar.php?aluno_id=$id'>Editar</a>" ?>
